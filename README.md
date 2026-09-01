@@ -20,7 +20,8 @@ on one backend:
 - **Ownly** — the owner/manager app: shifts and payroll, stock with auto-deduction, a cash-up flow, and a live orders board.
 - **Tillr** — the customer ordering PWA: menu, cart, checkout, and real-time order tracking.
 
-Built solo, front to back, in **under two months**.
+First version built solo, front to back, in **under two months** (June–July 2026). It has
+been under active development since.
 
 > **Where it actually stands.** No paying customer has ever used it: zero orders, zero
 > revenue, no live client. One restaurant in Limerick set a store up and tested it; it
