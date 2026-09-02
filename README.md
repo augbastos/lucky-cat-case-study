@@ -70,13 +70,16 @@ flowchart TD
 
 **One database, many tenants.** Every row carries a `store_id`; Postgres
 **Row-Level Security** enforces isolation in the database itself, so a bug in the app
-layer can't leak one restaurant's data to another. The same schema serves the live
-store, a pristine demo store, and any future tenant, selected by an environment
-variable per deployment.
+layer can't leak one restaurant's data to another. The same schema serves the store the
+Limerick restaurant set up, a pristine demo store, and any future tenant, selected by an
+environment variable per deployment.
 
-**Payments that actually settle.** Stripe **Connect** takes the customer's card and
-routes a platform fee to Lucky Cat and the rest to the restaurant, reconciled by
-signed webhooks — not a "payments" screenshot, real money moving.
+**Payments on a live rail.** Stripe **Connect** is wired to take the customer's card and
+split it — a platform fee to Lucky Cat, the rest to the restaurant — reconciled by signed
+webhooks. Stripe is in live mode and the card rail has been exercised end to end with a
+real €1 payment of my own. What has not happened is a split settling into a connected
+account, because no restaurant has operated on it: the rail is proven, the payout half
+is built and untested.
 
 **Edge-first.** The apps are static builds on **Cloudflare Pages**; all logic lives in
 **Supabase Edge Functions** and Postgres, so there's no server to babysit and the
