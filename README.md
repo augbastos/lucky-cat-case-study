@@ -70,8 +70,8 @@ flowchart TD
 
 **One database, many tenants.** Every row carries a `store_id`; Postgres
 **Row-Level Security** enforces isolation in the database itself, so a bug in the app
-layer can't leak one restaurant's data to another. The same schema serves the store the
-Limerick restaurant set up, a pristine demo store, and any future tenant, selected by an
+layer can't leak one restaurant's data to another. The same schema serves the store a restaurant
+set up while trialling it, a pristine demo store, and any future tenant, selected by an
 environment variable per deployment.
 
 **Payments on a live rail.** Stripe **Connect** is wired to take the customer's card and
