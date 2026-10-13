@@ -1,4 +1,4 @@
-# Lucky Cat — Multi-Tenant Restaurant SaaS, Built Solo (Case Study)
+# Lucky Cat — Multi-Tenant Restaurant SaaS, Built by One Developer with AI Coding Agents (Case Study)
 
 [![Supabase](https://img.shields.io/badge/backend-Supabase-3ecf8e?logo=supabase&logoColor=white)](https://supabase.com)
 [![Postgres RLS](https://img.shields.io/badge/security-Postgres%20RLS-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
@@ -14,18 +14,16 @@
 > is built: the problem, the architecture, and the decisions. Screenshots and a system
 > diagram, no product code.
 
-**Lucky Cat** is a multi-tenant SaaS I designed and built solo, as two connected apps
+**Lucky Cat** is a multi-tenant SaaS I designed and built as one developer, directing AI coding agents (Claude Code, Codex), as two connected apps
 on one backend:
 
 - **Ownly** — the owner/manager app: shifts and payroll, stock with auto-deduction, a cash-up flow, and a live orders board.
 - **Tillr** — the customer ordering PWA: menu, cart, checkout, and real-time order tracking.
 
-First version built solo, front to back, in **under two months** (June–July 2026). It has
-been under active development since.
+Development started in June 2026 and is ongoing.
 
 > **Where it actually stands.** No paying customer has ever used it: zero orders, zero
-> revenue, no live client. One restaurant in Limerick set a store up and tested it; it
-> never went into operation, and that account is frozen. Stripe **is** in live mode and
+> revenue, no live client. Stripe **is** in live mode and
 > the card rail has been exercised end to end with a real €1 payment of my own, but
 > that is infrastructure proven, not a customer. Everything below — the architecture,
 > the security review, the migration drift — is real work on a real system; what it is
@@ -70,9 +68,8 @@ flowchart TD
 
 **One database, many tenants.** Every row carries a `store_id`; Postgres
 **Row-Level Security** enforces isolation in the database itself, so a bug in the app
-layer can't leak one restaurant's data to another. The same schema serves the store a restaurant
-set up while trialling it, a pristine demo store, and any future tenant, selected by an
-environment variable per deployment.
+layer can't leak one restaurant's data to another. The same schema serves a pristine demo store and any
+future tenant, selected by an environment variable per deployment.
 
 **Payments on a live rail.** Stripe **Connect** is wired to take the customer's card and
 split it — a platform fee to Lucky Cat, the rest to the restaurant — reconciled by signed
@@ -112,7 +109,7 @@ or write, so an app-layer bug can't leak one store's rows into another's.*
 ## 🧠 Some decisions I'd defend in an interview
 
 - **RLS as the security boundary, not the app.** Multi-tenant leaks are almost always an app-layer `where` clause someone forgot. Pushing isolation into Postgres RLS means the default is deny; the app can't accidentally over-share.
-- **A demo store seeded from the same schema.** The public demo is a real tenant with throwaway data, reset nightly by a cron. Prospects see the actual product, never a mockup, and never a real customer's orders.
+- **A demo store seeded from the same schema.** The demo is a real tenant with throwaway data, and a nightly cron wipes its orders. It shows the actual product, never a mockup, and never another tenant's data.
 - **Security hardening done as its own pass.** A pentest-style review tightened the Content-Security-Policy to enforce mode (validated with zero violations across every surface) and locked anonymous access out of owner-only tables.
 
 ## 🔒 What a security audit found — and fixed
@@ -133,12 +130,5 @@ The same pass also caught a process bug, not just a code bug: some earlier fixes
 | Payments | Stripe Connect |
 | Frontend | TypeScript / React, PWA |
 | Hosting | Cloudflare Pages |
-
-## 🚀 Try the live demo
-
-| App | Link |
-|---|---|
-| Ownly (owner app) | https://lucky-cat.pages.dev/template/ownly/ |
-| Tillr (ordering app) | https://lucky-cat.pages.dev/template/tillr/ |
 
 More work: [augustobastos.pages.dev](https://augustobastos.pages.dev)
