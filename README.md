@@ -5,8 +5,8 @@
 [![Cloudflare Pages](https://img.shields.io/badge/hosting-Cloudflare%20Pages-f38020?logo=cloudflare&logoColor=white)](https://pages.cloudflare.com)
 [![Stripe Connect](https://img.shields.io/badge/payments-Stripe%20Connect-635bff?logo=stripe&logoColor=white)](https://stripe.com/connect)
 [![TypeScript](https://img.shields.io/badge/frontend-TypeScript%20%2F%20React-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![type: case study](https://img.shields.io/badge/type-case%20study-informational)]()
-[![paying customers](https://img.shields.io/badge/paying%20customers-0-lightgrey)]()
+![type: case study](https://img.shields.io/badge/type-case%20study-informational)
+![paying customers](https://img.shields.io/badge/paying%20customers-0-lightgrey)
 
 **Row-Level Security as the tenant boundary · Stripe Connect for split payments · Postgres + Edge Functions, no server to babysit.**
 
@@ -66,9 +66,10 @@ flowchart TD
     S -->|webhook| EF
 ```
 
-**One database, many tenants.** Every row carries a `store_id`; Postgres
-**Row-Level Security** enforces isolation in the database itself, so a bug in the app
-layer can't leak one restaurant's data to another. The same schema serves a pristine demo store and any
+**One database, many tenants.** The design uses `store_id` and Postgres
+**Row-Level Security** to restrict tenant access in the database. Isolation also depends
+on the roles, grants, and API paths involved; the audit below found a function that
+allowed cross-tenant stock changes. The same schema serves a demo store and any
 future tenant, selected by an environment variable per deployment.
 
 **Payments on a live rail.** Stripe **Connect** is wired to take the customer's card and
@@ -78,9 +79,8 @@ real €1 payment of my own. What has not happened is a split settling into a co
 account, because no restaurant has operated on it: the rail is proven, the payout half
 is built and untested.
 
-**Edge-first.** The apps are static builds on **Cloudflare Pages**; all logic lives in
-**Supabase Edge Functions** and Postgres, so there's no server to babysit and the
-cold-start cost is near zero.
+**Edge-first.** The apps are static builds on **Cloudflare Pages**, with backend logic in
+**Supabase Edge Functions** and Postgres.
 
 ### Tenant isolation, illustrated
 
@@ -97,20 +97,20 @@ flowchart LR
     ReqB -.->|blocked by RLS| RowA
 ```
 
-*Same table, same schema, every tenant — Postgres itself refuses a cross-tenant read
-or write, so an app-layer bug can't leak one store's rows into another's.*
+*Same table, same schema, every tenant: RLS scopes each row to its store. Functions and
+column grants are a separate surface, covered by the audit below.*
 
 ## 📸 Screenshots
 
 | Ownly — owner dashboard | Tillr — customer ordering |
 |---|---|
-| ![Ownly](assets/ownly-app.png) | ![Tillr](assets/tillr-app.png) |
+| ![Ownly navigation drawer over the owner dashboard](assets/ownly-app.png) | ![Tillr demo ordering screen with delivery, takeaway, and dine-in options](assets/tillr-app.png) |
 
 ## 🧠 Some decisions I'd defend in an interview
 
-- **RLS as the security boundary, not the app.** Multi-tenant leaks are almost always an app-layer `where` clause someone forgot. Pushing isolation into Postgres RLS means the default is deny; the app can't accidentally over-share.
-- **A demo store seeded from the same schema.** The demo is a real tenant with throwaway data, and a nightly cron wipes its orders. It shows the actual product, never a mockup, and never another tenant's data.
-- **Security hardening done as its own pass.** A pentest-style review tightened the Content-Security-Policy to enforce mode (validated with zero violations across every surface) and locked anonymous access out of owner-only tables.
+- **RLS as a database-level tenant boundary.** The intent is to avoid relying only on app-layer tenant filters. The audit found that function execute grants and column write permissions also needed attention; RLS alone did not cover those paths.
+- **A demo store seeded from the same schema.** The demo uses throwaway data, and a nightly cron wipes its orders. The Tillr screenshot shows its demo banner, which labels orders as tests and states that no real payments are taken.
+- **Security hardening done as its own pass.** A pentest-style review tightened the Content-Security-Policy to enforce mode and restricted anonymous access to owner-only tables. This repository does not include a CSP validation report or a surface-by-surface test matrix.
 
 ## 🔒 What a security audit found — and fixed
 
