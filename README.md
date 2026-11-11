@@ -139,7 +139,9 @@ It never runs the PR's code.
 - [Design decisions](docs/decisions.md)
 - [What a security audit found, and fixed](docs/security-audit.md)
 
-More work: [augustobastos.pages.dev](https://augustobastos.pages.dev)
+Product page: [luckycat.ie/restaurants](https://luckycat.ie/restaurants)
+
+More work: [augbastos.dev](https://augbastos.dev)
 
 ## Licence
 
