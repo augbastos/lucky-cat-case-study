@@ -4,7 +4,7 @@
 ![paying customers](https://img.shields.io/badge/paying%20customers-0-lightgrey)
 ![license: all rights reserved](https://img.shields.io/badge/license-all%20rights%20reserved-lightgrey)
 
-A write-up of how Lucky Cat is built: the problem, the architecture, and the decisions. Lucky Cat is a multi-tenant SaaS I designed and built as one developer, directing AI coding agents (Claude Code, Codex).
+A write-up of how Lucky Cat is built. Lucky Cat is a multi-tenant SaaS I designed and built as one developer, directing AI coding agents (Claude Code, Codex).
 
 > Source is private, because it is a commercial product. This is the story of how it
 > is built: the problem, the architecture, and the decisions. Screenshots and a system
@@ -126,10 +126,11 @@ There is nothing to install, run or test. The repo holds this write-up, two scre
 
 ## Pull request safety check
 
-The `safety` workflow runs on pull requests. It fails the PR in two cases:
+The `safety` workflow runs on pull requests. It fails the PR in three cases:
 
 - a secret is introduced by the PR's commits (checked with gitleaks);
-- a changed path matches a rule in `.github/safety-critical.txt` on the base branch.
+- a changed path matches a rule in `.github/safety-critical.txt` on the base branch. That file is not in the repo yet, so no rule from it applies;
+- the PR changes `.github/workflows/safety.yml` or `.github/safety-critical.txt`, once `safety.yml` exists on the base branch.
 
 It never runs the PR's code.
 

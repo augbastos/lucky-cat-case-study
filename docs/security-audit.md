@@ -2,7 +2,6 @@
 
 Moved from the README. Back to the [README](../README.md).
 
-
 A security review I ran against the deployed system — adversarial testing against the actual database grants and API behaviour, not just a code read-through — turned up real bugs. Two worth naming, both fixed the same day:
 
 - **Any signed-in session could rewrite another store's inventory.** A stock-adjustment function was meant to run only as an internal database trigger, but Postgres's default grants left it directly callable over the REST API with no ownership check — any logged-in session (including Tillr's anonymous-checkout flow, which still carries an authenticated role) could call it against *any* store's ID — a competitor's, not just their own. The fix: revoke direct execute access; the trigger doesn't need that grant to keep firing.
