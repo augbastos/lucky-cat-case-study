@@ -113,7 +113,7 @@ column grants are a separate surface, covered in the [security audit notes](docs
 
 ## How to read this repo
 
-There is nothing to install, run or test. The repo holds this write-up, two screenshots and a licence.
+There is nothing to install, run or test. The repo holds this write-up, two screenshots, a licence and one merge-check workflow.
 
 | Path | What it is |
 |---|---|
