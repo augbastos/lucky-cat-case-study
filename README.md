@@ -121,18 +121,18 @@ There is nothing to install, run or test. The repo holds this write-up, two scre
 | `docs/decisions.md` | Design decisions |
 | `docs/security-audit.md` | What a security audit found, and fixed |
 | `assets/` | The two screenshots shown above |
-| `.github/workflows/safety.yml` | The merge check, described below |
+| `.github/workflows/ci.yml` | The merge checks, described below |
 | `LICENSE` | All rights reserved |
 
 ## Pull request safety check
 
-The `safety` workflow runs on pull requests. It fails the PR in three cases:
+The `Safety` job of the `CI` workflow runs on pull requests. It fails the PR with "needs owner" in three cases:
 
 - a secret is introduced by the PR's commits (checked with gitleaks);
 - a changed path matches a rule in `.github/safety-critical.txt` on the base branch. That file is not in the repo yet, so no rule from it applies;
-- the PR changes `.github/workflows/safety.yml` or `.github/safety-critical.txt`, once `safety.yml` exists on the base branch.
+- the PR changes `.github/scripts/safety.sh`, `.github/safety-critical.txt` or `.github/workflows/ci.yml`.
 
-It never runs the PR's code.
+The policy script runs from the base revision, never the PR's copy. `CI passed` aggregates the jobs and is the other required check.
 
 ## Deeper docs
 
